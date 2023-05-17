@@ -7,6 +7,9 @@ services:
             - "5000:5000"
         depends_on:
             - database
+        entrypoint: dockerize -wait tcp://database:3306 -timeout 20s docker-entrypoint.sh
+        command: node index.js
+
     nginx:
         restart: always
         build:
@@ -14,7 +17,8 @@ services:
         ports:
             - "8080:80"
         depends_on:
-            - database
+            - nodeserver
+
     database:
         image: mysql:5.7
         restart: unless-stopped
@@ -25,5 +29,6 @@ services:
             - 3306:3306
         volumes:
             - mysql:/var/lib/mysql
+
 volumes: 
     mysql:
